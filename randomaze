@@ -1,0 +1,42 @@
+function Initialize() {
+  
+var triggers = ScriptApp.getScriptTriggers();
+  
+  for (var i in triggers) {
+    ScriptApp.deleteTrigger(triggers[i]);
+}
+
+ScriptApp.newTrigger("rejo")
+.forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
+.onFormSubmit()
+.create();
+
+}
+
+
+function rejo(e) {
+  Logger.log('value of e is: ' + e);
+  try {
+    var ss,cc,sendername,subject;
+    var message,value,textbody,sender;
+    cc = Session.getActiveUser().getEmail();
+    
+    ss=SpreadsheetApp.getActiveSpreadsheet();
+    SpreadsheetApp.setActiveSheet(ss.getSheets()[0]);
+    sender = e.namedValues["Email ID"].toString();
+    var nam = e.namedValues["Name"].toString();
+    var rejoset = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("QuestionSet");
+    var rejosetvalue = rejoset.getRange(1,1,4,4).getValues();
+    message = "<html><body>Dear Student <br>:"+nam;
+    message+="<br><br><h3>Your Question for Lab Internal is</h3>";
+    message+="<p><h4>1) "+rejosetvalue[1][1]+"</h4></p>";
+    message+="<p>Submit the Answer Sheet in GCR<br></p></body></html>";
+    
+    sendername = "Random Qun"
+    subject = "Web Programming Lab Internal"
+    GmailApp.sendEmail(sender, subject, message, {name: sendername, htmlBody:message});
+  }
+  catch (e) {
+    Logger.log(e.toString());
+  }
+}
